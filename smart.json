@@ -1,9 +1,9 @@
 {
-  "name": "auth_profile_fields",
-  "description": "Provides function loginWithProfileFields() which is designed to log in user by using specified 'profile' field(s).",
-  "homepage": "https://github.com/pwldp/meteor-auth_profile_fields",
+  "name": "accounts-profile-fields",
+  "description": "Provides function loginWithProfileFields() which is designed to log in user by using specified 'profile' field(s) from collecton 'users'.",
+  "homepage": "https://github.com/pwldp/meteor-accounts-profile-fields",
   "author": "Dariusz Pawlak <pawlakdp@gmail.com>",
   "version": "0.0.1",
-  "git": "https://github.com/pwldp/meteor-auth_profile_fields.git",
+  "git": "https://github.com/pwldp/meteor-accounts-profile-fields.git",
   "packages": {}
 }
