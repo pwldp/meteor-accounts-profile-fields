@@ -1,4 +1,4 @@
-meteor-auth_profile_fields
+meteor-accounts-profile-fields
 ==========================
 
 Provides function for Meteor framework to log in using "username" stored in specified profile fields
@@ -6,7 +6,7 @@ Provides function for Meteor framework to log in using "username" stored in spec
 
 ## Requirements
 
-meteor-auth_profile_fields needs to be installed with accounts-password package.
+meteor-accounts-profile-fields needs to be installed with accounts-password package.
 
 So, at first you need to install it by:
 `meteor add accounts-password`
@@ -15,7 +15,7 @@ So, at first you need to install it by:
 
 ## Add Package 
 
-`meteor add meteor-auth_profile_fields`
+`meteor add accounts-profile-fields`
 
 
 
