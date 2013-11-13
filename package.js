@@ -8,8 +8,8 @@ Package.on_use(function (api) {
 
   //api.export && api.export('Roles');
 
-  api.add_files('auth_profile_fields-server.js', 'server');
-  api.add_files('auth_profile_fields-client.js', 'client');
+  api.add_files('accounts-profile-fields-server.js', 'server');
+  api.add_files('accounts-profile-fields-client.js', 'client');
 });
 /*
 Package.on_test(function (api) {
