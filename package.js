@@ -1,5 +1,5 @@
 Package.describe({
-  summary: "Profile fields based log in"
+  summary: "Profile fields based log in, extended version of loginWithPassword() function"
 });
 
 Package.on_use(function (api) {
@@ -11,12 +11,3 @@ Package.on_use(function (api) {
   api.add_files('accounts-profile-fields-server.js', 'server');
   api.add_files('accounts-profile-fields-client.js', 'client');
 });
-/*
-Package.on_test(function (api) {
-  // include accounts-password so Meteor.users exists
-  api.use(['roles','accounts-password','tinytest'], 'server');
-
-  api.add_files('tests/server.js', 'server');
-  api.add_files('tests/client.js', 'client');
-});
-*/
