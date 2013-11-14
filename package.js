@@ -5,9 +5,6 @@ Package.describe({
 Package.on_use(function (api) {
   var both = ['client', 'server'];
   api.use(['accounts-base' , 'accounts-password'], both);
-
-  //api.export && api.export('Roles');
-
   api.add_files('accounts-profile-fields-server.js', 'server');
   api.add_files('accounts-profile-fields-client.js', 'client');
 });
