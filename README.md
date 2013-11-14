@@ -19,6 +19,24 @@ So, at first you need to install it by:
 
 
 
+## Example
+
+`
+var login = 'ABC123456';
+var password = '123456';
+var profile_fields_to_check_login = ['register_plate', 'phone_number'];
+Meteor.loginWithProfileField(login, password, profile_fields_to_check_login, function(err) {
+  if(Meteor.loggingIn()) {
+    console.log("logging in...");
+  } else {
+    if(err) {
+      console.log("log.err= " + err);
+    } else {
+      console.log("loggged in!");
+    }
+  }
+});
+`
 
 
 
