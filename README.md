@@ -1,7 +1,10 @@
 meteor-accounts-profile-fields
 ==========================
 
-Provides function for Meteor framework to log in using "username" stored in specified profile fields
+Smart package for [Meteor](http://www.meteor.com/) framework.
+
+Provides function for Meteor framework to log in using "username" stored in specified profile fields.
+Could be used as a replacement for `loginWithPassword()` function.
 
 
 ## Requirements
