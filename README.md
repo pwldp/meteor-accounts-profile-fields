@@ -21,7 +21,7 @@ So, at first you need to install it by:
 
 ## Example
 
-`
+```js
 var login = 'ABC123456';
 var password = '123456';
 var profile_fields_to_check_login = ['register_plate', 'phone_number'];
@@ -36,7 +36,7 @@ Meteor.loginWithProfileField(login, password, profile_fields_to_check_login, fun
     }
   }
 });
-`
+```
 
 
 
