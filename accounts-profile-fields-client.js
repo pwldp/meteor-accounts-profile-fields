@@ -16,7 +16,6 @@
 // First trying to log in using specified profile field, next if it fails,
 // trying to log in using standard loginWithPassword function.
 //
-console.log("accounts-profile-fields-client...");
 Meteor.loginWithProfileField = function(lname, password, pfields, callback){
 
     check(lname, String);
@@ -29,8 +28,6 @@ Meteor.loginWithProfileField = function(lname, password, pfields, callback){
     };
 
     Meteor.call('findFirstMatchUser', lname, pfields, function (err, data) {
-	console.log("error="+err);
-	console.log("data="+EJSON.stringify(data));
 	if (err || !data) {
 	    Meteor.loginWithPassword(lname, password, function(err){
 		callback && callback(err);

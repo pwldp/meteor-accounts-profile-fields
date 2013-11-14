@@ -12,9 +12,6 @@
 // So be aware of using ONLY profile fields which have unique values.
 // For example it mighty be: phone number.
 //
-console.log("accounts-profile-fields-server...");
-//
-//var EJSON = Package.ejson.EJSON;
 var check = Package.check.check;
 var Future = Npm.require('fibers/future');
 //
@@ -34,7 +31,6 @@ Meteor.methods({
 	    row["profile."+item] = fieldval;
 	    q.push(row);
 	});
-	console.log("query="+JSON.stringify(q));
 	var ret = Meteor.users.findOne({$or: q}, {fields:{'username':1}} );
 	fut['return']( ret );
 	return fut.wait();
