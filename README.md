@@ -55,3 +55,7 @@ Meteor.loginWithProfileField(login, password, profile_fields_to_check_login, fun
 
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/pwldp/meteor-accounts-profile-fields/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
