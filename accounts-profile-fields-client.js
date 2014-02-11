@@ -16,32 +16,26 @@
 // First trying to log in using specified profile field, next if it fails,
 // trying to log in using standard loginWithPassword function.
 //
-Meteor.loginWithProfileField = function(lname, password, pfields, callback){
+Meteor.loginWithProfileField = function(lname, password, pfields, callback) {
 
-    check(lname, String);
-    check(password, String);
-    check(pfields, [String]);
+  check(lname, String);
+  check(password, String);
+  check(pfields, [String]);
 
-    if ( Meteor.userId() ){
-	callback( new Meteor.Error(400, "At first logout current logged user ID="+Meteor.userId()) );
-	return;
-    };
+  if (Meteor.userId()) {
+    callback(new Meteor.Error(400, "At first logout current logged user ID="+Meteor.userId()));
+    return;
+  }
 
-    Meteor.call('findFirstMatchUser', lname, pfields, function (err, data) {
-	if (err || !data) {
-	    Meteor.loginWithPassword(lname, password, function(err){
-		callback && callback(err);
-		return;
-	    });
-	} else {
-	    // found user, so try to log in
-	    Meteor.loginWithPassword(data.username, password, function(err){
-		callback && callback(err);
-		return;
-	    });
-	}
-    });
-};
-//
-// EOF
-//
+  Meteor.call('findFirstMatchUser', lname, pfields, function (err, data) {
+    if (err || !data) {
+      callback(new Meteor.Error(400, 'Could not find user'));
+    } else {
+      Meteor.loginWithPassword(data.email, password, function(err) {
+        if (err) { callback(err); }
+        return;
+      });                                                                                                                                                                                                          
+    }   
+  }); 
+}
+
