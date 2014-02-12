@@ -3,7 +3,7 @@
   "description": "Provides function loginWithProfileFields() which is designed to log in user by using specified 'profile' field(s) from collecton 'users'.",
   "homepage": "https://github.com/pwldp/meteor-accounts-profile-fields",
   "author": "Dariusz Pawlak <pawlakdp@gmail.com>",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "git": "https://github.com/pwldp/meteor-accounts-profile-fields.git",
   "packages": {}
 }
