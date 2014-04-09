@@ -8,34 +8,44 @@
 // 2013.11.07
 //
 
+// Attempt to log in with a password and one of an allowed list of profile
+// fields.
 //
-// Run in client: Meteor.loginWithProfileField();
-// var pfields = [ 'phone_number' ];
-// Meteor.loginWithProfileField('+48123456789', 'P@ssw0rd', profields);
-//
-// First trying to log in using specified profile field, next if it fails,
-// trying to log in using standard loginWithPassword function.
-//
-Meteor.loginWithProfileField = function(lname, password, pfields, callback) {
+// @param selector {Object} selector based on one or more profile fields.
+// fields will be prepended with "profile." before searching the user object
+// and are checked against a whitelist set on server.
+//   example:
+//   - {phone: (phonenumber)}
+// @param password {String}
+// @param callback {Function(error|undefined)}
+Meteor.loginWithProfileField = function (selector, password, callback) {
+  var srp = new SRP.Client(password);
+  var request = srp.startExchange();
 
-  check(lname, String);
-  check(password, String);
-  check(pfields, [String]);
+  request.user = selector;
 
-  if (Meteor.userId()) {
-    callback(new Meteor.Error(400, "At first logout current logged user ID="+Meteor.userId()));
-    return;
-  }
-
-  Meteor.call('findFirstMatchUser', lname, pfields, function (err, data) {
-    if (err || !data) {
-      callback(new Meteor.Error(400, 'Could not find user'));
-    } else {
-      Meteor.loginWithPassword(data.email, password, function(err) {
-        if (err) { callback(err); }
+  // Normally, we only set Meteor.loggingIn() to true within
+  // Accounts.callLoginMethod, but we'd also like it to be true during the
+  // password exchange. So we set it to true here, and clear it on error; in
+  // the non-error case, it gets cleared by callLoginMethod.
+  Accounts._setLoggingIn(true);
+  Accounts.connection.apply(
+    'beginPasswordExchangeForProfileFields', [request], function (error, result) {
+      if (error || !result) {
+        Accounts._setLoggingIn(false);
+        error = error ||
+          new Error("No result from call to beginPasswordExchange");
+        callback && callback(error);
         return;
-      });                                                                                                                                                                                                          
-    }   
-  }); 
-}
+      }
 
+      var response = srp.respondToChallenge(result);
+      Accounts.callLoginMethod({
+        methodArguments: [{srp: response}],
+        validateResult: function (result) {
+          if (!srp.verifyConfirmation({HAMK: result.HAMK}))
+            throw new Error("Server is cheating!");
+        },
+        userCallback: callback});
+    });
+};
