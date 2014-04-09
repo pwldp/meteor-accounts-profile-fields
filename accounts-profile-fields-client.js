@@ -18,7 +18,7 @@
 //   - {phone: (phonenumber)}
 // @param password {String}
 // @param callback {Function(error|undefined)}
-Meteor.loginWithProfileField = function (fields, value, password, callback) {
+Meteor.loginWithProfileField = function (value, password, fields, callback) {
   var srp = new SRP.Client(password);
   var request = srp.startExchange();
 
