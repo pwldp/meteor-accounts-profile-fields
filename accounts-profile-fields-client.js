@@ -18,11 +18,12 @@
 //   - {phone: (phonenumber)}
 // @param password {String}
 // @param callback {Function(error|undefined)}
-Meteor.loginWithProfileField = function (selector, password, callback) {
+Meteor.loginWithProfileField = function (fields, value, password, callback) {
   var srp = new SRP.Client(password);
   var request = srp.startExchange();
 
-  request.user = selector;
+  request.fields = fields;
+  request.value = value;
 
   // Normally, we only set Meteor.loggingIn() to true within
   // Accounts.callLoginMethod, but we'd also like it to be true during the

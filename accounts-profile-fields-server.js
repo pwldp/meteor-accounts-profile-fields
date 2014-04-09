@@ -25,23 +25,23 @@ Meteor.allowLoginWithFields = function(fields) {
   allowedLoginFields = allowedLoginFields.concat(fields);
 };
 
-var selectorFromUserProfileQuery = function (user) {
-  console.log(user);
-  check(user, Object);
+var selectorFromUserProfileQuery = function (fields, value) {
+  check(fields, Array);
+  check(value, String);
 
   var selector = [];
   allowedLoginFields.forEach(function(field) {
     var row = {};
-    if (user.hasOwnProperty(field)) {
-      row['profile.' + field] = user[field];
+    if (fields.indexOf(field) !== -1) {
+      row['profile.' + field] = value;
       selector.push(row);
     }
   });
 
-  if (selector.length === 0)
-    throw new Match.Error("No valid profile fields were provided.");
+  // Also match on username and email address
+  selector.push({ username: value });
+  selector.push({ 'emails.address': value });
 
-  console.log(selector);
   return { $or: selector };
 };
 
@@ -60,9 +60,8 @@ var selectorFromUserProfileQuery = function (user) {
 //   B: hex encoded int. server's public key for this exchange
 Meteor.methods({beginPasswordExchangeForProfileFields: function (request) {
   var self = this;
-  console.log(request);
   try {
-    var selector = selectorFromUserProfileQuery(request.user);
+    var selector = selectorFromUserProfileQuery(request.fields, request.value);
 
     var user = Meteor.users.findOne(selector);
     if (!user)
