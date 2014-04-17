@@ -95,3 +95,27 @@ Meteor.methods({beginPasswordExchangeForProfileFields: function (request) {
   );
   return challenge;
 }});
+
+Accounts.registerLoginHandler("password", function (options) {
+  var selector = selectorFromUserProfileQuery(options.fields, options.value);
+
+  var user = Meteor.users.findOne(selector);
+  if (!user)
+    throw new Meteor.Error(403, "User not found");
+
+  if (!user.services || !user.services.password ||
+      !user.services.password.srp)
+    throw new Meteor.Error(403, "User has no password set");
+
+  var verifier = user.services.password.srp;
+  var attempt = SRP.generateVerifier(options.password, {
+    identity: verifier.identity, salt: verifier.salt});
+
+  if (verifier.verifier !== attempt.verifier)
+    return {
+      userId: user._id,
+      error: new Meteor.Error(403, "Incorrect password")
+    };
+
+  return {userId: user._id};
+});

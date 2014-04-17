@@ -50,3 +50,11 @@ Meteor.loginWithProfileField = function (value, password, fields, callback) {
         userCallback: callback});
     });
 };
+
+Meteor.loginWithProfileFieldPlain = function (value, password, fields, callback) {
+  Accounts._setLoggingIn(true);
+  Accounts.callLoginMethod({
+    methodArguments: [{fields: fields, value: value, password: password}],
+    userCallback: callback
+  });
+};
