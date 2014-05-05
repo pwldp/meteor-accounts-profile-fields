@@ -33,7 +33,7 @@ var selectorFromUserProfileQuery = function (fields, value) {
   allowedLoginFields.forEach(function(field) {
     var row = {};
     if (fields.indexOf(field) !== -1) {
-      row['profile.' + field] = value;
+      row['profile.' + field] = new RegExp('^'+value+'$', 'i');
       selector.push(row);
     }
   });
