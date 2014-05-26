@@ -29,13 +29,12 @@ In example below login name 'ABC123456' is checked against fields:
 from 'users' collection. 
 At first are checked fields from 'profile'. 
 
-If user is found with specified value of the profile field next user.username and
-password (ex. '123456') are used as arguments in loginWithPassword() function to log in.
+### on server
+```js
+Meteor.allowLoginWithFields(['register_plate', 'phone_number']);
+```
 
-If profile field isn't found then is used loginWithPassword() with login (ex. 'ABC123456')
-and password (ex. '123456').
-
-
+### on client
 ```js
 var login = 'ABC123456';
 var password = '123456';

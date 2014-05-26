@@ -3,8 +3,8 @@ Package.describe({
 });
 
 Package.on_use(function (api) {
-  var both = ['client', 'server'];
-  api.use(['accounts-base' , 'accounts-password'], both);
+  api.use(['accounts-base' , 'accounts-password'], ['client', 'server']);
+  api.use('srp', ['client', 'server']);
   api.add_files('accounts-profile-fields-server.js', 'server');
   api.add_files('accounts-profile-fields-client.js', 'client');
 });
