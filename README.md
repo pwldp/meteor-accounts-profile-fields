@@ -1,3 +1,8 @@
+It actually doesn't work with Meteor 0.8.2
+
+
+
+
 meteor-accounts-profile-fields
 ==========================
 
