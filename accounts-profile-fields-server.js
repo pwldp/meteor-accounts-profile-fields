@@ -65,14 +65,13 @@ Accounts.registerLoginHandler("profileFields", function(options){
     if (! options.profileFields && ! options.loginName){
 	return undefined;
     };
-    //
+    
     var selector = selectorFromUserProfileQuery(allowedLoginFields, options.loginName);
-    console.log("selector= "+EJSON.stringify(selector));
-    //
+    
     var user = Meteor.users.findOne(selector);
     
     if (!user) throw new Meteor.Error(403, "User not found");
-    //
+    
     if (!user.services || !user.services.password || !(user.services.password.bcrypt || user.services.password.srp))
 	throw new Meteor.Error(403, "User has no password set");
 
