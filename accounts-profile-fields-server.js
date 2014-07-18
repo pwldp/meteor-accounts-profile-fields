@@ -2,14 +2,18 @@
 // meteor-auth_profile_fields-server.js
 //
 // Dariusz Pawlak <d.pawlak@wurth.pl>
-// 2013.11.07                                                                                                                                                                                                      
 //
 
 //
-// This method finds first user which satisfies the conditions:
-// the 'fieldval' is equal to content of the one of fields from 'pfields' list.
+// Authentication method which uses users profile fields defined in settings.json file:
+// settings.json example:
 //
-// So be aware of using ONLY profile fields which have unique values.
+// {
+//    "login_with_profile_fields": ["phone","registration_plate"]
+// }
+//
+//
+// Be aware of using ONLY profile fields which have unique values
 // For example it might be: phone number.
 //
 var check = Package.check.check;
@@ -19,103 +23,61 @@ var allowedLoginFields = [];
 // may use when submitting a login request.
 //
 // @param fields {Array} or {String}
-Meteor.allowLoginWithFields = function(fields) {
-  if (typeof fields === 'string')
-    fields = [fields];
-  allowedLoginFields = allowedLoginFields.concat(fields);
+var allowLoginWithFields = function(fields) {
+    if (typeof fields === 'string') fields = [fields];
+	allowedLoginFields = allowedLoginFields.concat(fields);
 };
-
-var selectorFromUserProfileQuery = function (fields, value) {
-  check(fields, Array);
-  check(value, String);
-
-  var selector = [];
-  allowedLoginFields.forEach(function(field) {
-    var row = {};
-    if (fields.indexOf(field) !== -1) {
-      row['profile.' + field] = new RegExp('^'+value+'$', 'i');
-      selector.push(row);
-    }
-  });
-
-  // Also match on username and email address
-  selector.push({ username: value });
-  selector.push({ 'emails.address': value });
-
-  return { $or: selector };
-};
-
-// Step 1 of SRP password exchange. This puts an `M` value in the
-// session data for this connection. If a client later sends the same
-// `M` value to a method on this connection, it proves they know the
-// password for this user. We can then prove we know the password to
-// them by sending our `HAMK` value.
 //
-// @param request {Object} with fields:
-//   user: list of profile field names for query selector
-//   A: hex encoded int. the client's public key for this exchange
-// @returns {Object} with fields:
-//   identity: random string ID
-//   salt: random string ID
-//   B: hex encoded int. server's public key for this exchange
-Meteor.methods({beginPasswordExchangeForProfileFields: function (request) {
-  var self = this;
-  try {
-    var selector = selectorFromUserProfileQuery(request.fields, request.value);
+var selectorFromUserProfileQuery = function (fields, value) {
+    check(fields, Array);
+    check(value, String);
 
-    var user = Meteor.users.findOne(selector);
-    if (!user)
-      throw new Meteor.Error(403, "User not found");
-
-    if (!user.services || !user.services.password ||
-        !user.services.password.srp)
-      throw new Meteor.Error(403, "User has no password set");
-
-    var verifier = user.services.password.srp;
-    var srp = new SRP.Server(verifier);
-    var challenge = srp.issueChallenge({A: request.A});
-
-  } catch (err) {
-    // Report login failure if the method fails, so that login hooks are
-    // called. If the method succeeds, login hooks will be called when
-    // the second step method ('login') is called. If a user calls
-    // 'beginPasswordExchange' but then never calls the second step
-    // 'login' method, no login hook will fire.
-    Accounts._reportLoginFailure(self, 'beginPasswordExchange', arguments, {
-      type: 'password',
-      error: err,
-      userId: user && user._id
+    var selector = [];
+    allowedLoginFields.forEach(function(field) {
+	var row = {};
+	if (fields.indexOf(field) !== -1) {
+	    row['profile.' + field] = value;
+	    selector.push(row);
+	}
     });
-    throw err;
-  }
+    // Also match on username and email address
+    selector.push({ username: value });
+    selector.push({ 'emails.address': value });
 
-  // Save results so we can verify them later.
-  Accounts._setAccountData(this.connection.id, 'srpChallenge',
-    { userId: user._id, M: srp.M, HAMK: srp.HAMK }
-  );
-  return challenge;
-}});
+    return { $or: selector };
+};
+//
+// Load profile fields list on server startup
+//
+Meteor.startup(function(){
+    // load allowed login fields from settings.json
+    try {
+	allowLoginWithFields(Meteor.settings.login_with_profile_fields);
+    } catch (e) {
+	throw err;
+    };
+});
+//
+// register login handler which uses users profile fields
+//
+Accounts.registerLoginHandler("profileFields", function(options){
+    
+    if (! options.profileFields && ! options.loginName){
+	return undefined;
+    };
+    //
+    var selector = selectorFromUserProfileQuery(allowedLoginFields, options.loginName);
+    console.log("selector= "+EJSON.stringify(selector));
+    //
+    var user = Meteor.users.findOne(selector);
+    
+    if (!user) throw new Meteor.Error(403, "User not found");
+    //
+    if (!user.services || !user.services.password || !(user.services.password.bcrypt || user.services.password.srp))
+	throw new Meteor.Error(403, "User has no password set");
 
-Accounts.registerLoginHandler("password", function (options) {
-  var selector = selectorFromUserProfileQuery(options.fields, options.value);
-
-  var user = Meteor.users.findOne(selector);
-  if (!user)
-    throw new Meteor.Error(403, "User not found");
-
-  if (!user.services || !user.services.password ||
-      !user.services.password.srp)
-    throw new Meteor.Error(403, "User has no password set");
-
-  var verifier = user.services.password.srp;
-  var attempt = SRP.generateVerifier(options.password, {
-    identity: verifier.identity, salt: verifier.salt});
-
-  if (verifier.verifier !== attempt.verifier)
     return {
-      userId: user._id,
-      error: new Meteor.Error(403, "Incorrect password")
+	userId: user._id
     };
 
-  return {userId: user._id};
 });

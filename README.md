@@ -1,5 +1,4 @@
-It actually doesn't work with Meteor >= 0.8.2
-
+It works with Meteor version >= 0.8.2
 
 
 
