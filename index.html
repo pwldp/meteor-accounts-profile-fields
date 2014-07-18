@@ -1,0 +1,13 @@
+<head>
+  <title>Login with profile filed simple example</title>
+</head>
+
+<body>
+    {{#if currentUser}}
+	{{> logout}}
+    {{else}}
+	{{> login}}
+    {{/if}}
+    <br>
+    <hr>
+</body>
