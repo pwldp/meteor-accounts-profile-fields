@@ -34,16 +34,19 @@ from 'users' collection.
 At first are checked fields from 'profile'. 
 
 ### on server
+Define in settings.json fields used to find user, for example:
 ```js
-Meteor.allowLoginWithFields(['register_plate', 'phone_number']);
+{
+  "login_with_profile_fields": ["register_plate","phone"]
+}
 ```
 
 ### on client
 ```js
 var login = 'ABC123456';
 var password = '123456';
-var profile_fields_to_check_login = ['register_plate', 'phone_number'];
-Meteor.loginWithProfileField(login, password, profile_fields_to_check_login, function(err) {
+
+Meteor.loginWithProfileField(login, password, function(err) {
   if(Meteor.loggingIn()) {
     console.log("logging in...");
   } else {
