@@ -13,7 +13,7 @@ Could be used as a replacement for `loginWithPassword()` function.
 
 ## Requirements
 
-meteor-accounts-profile-fields needs to be installed with accounts-base package.
+`accounts-profile-fields` needs to be installed with `accounts-base` package.
 
 So, at first you need to install it by:
 `meteor add accounts-base`
