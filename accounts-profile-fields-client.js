@@ -27,18 +27,19 @@ var hashPassword = function(password) {
 // @param password {String}
 // @param callback {Function(error|undefined)}
 Meteor.loginWithProfileField = function(loginName, password, callback){
-
+    
     var options = {
-	    profileFields: true,
-	    loginName: loginName,
-	    password: hashPassword(password)
-	};
+	profileFields: true,
+	profileLoginName: loginName,
+	profileLoginPassword: hashPassword(password)	// this options field can't be named: "password", 
+							// because of incompatibility with accounts-password
+    };
     
     Accounts.callLoginMethod({
 	methodName: 'login',
 	methodArguments: [options],
 	userCallback: callback
     });
-
+    
 };
 

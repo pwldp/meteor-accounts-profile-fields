@@ -1,5 +1,8 @@
 v.NEXT
 
+0.3.1
+* Remove incompatibility with accounts-password
+
 0.3.0
 * Updated to work with Meteor >= 0.8.2
 

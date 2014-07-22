@@ -29,6 +29,7 @@ var allowLoginWithFields = function(fields) {
 };
 //
 var selectorFromUserProfileQuery = function (fields, value) {
+    
     check(fields, Array);
     check(value, String);
 
@@ -54,19 +55,29 @@ Meteor.startup(function(){
     try {
 	allowLoginWithFields(Meteor.settings.login_with_profile_fields);
     } catch (e) {
-	throw err;
+	//throw err;
     };
 });
+//
+var checkPassword = Accounts._checkPassword;
+//
+var passwordValidator = Match.OneOf(
+    String,
+    { digest: String, algorithm: String }
+);
 //
 // register login handler which uses users profile fields
 //
 Accounts.registerLoginHandler("profileFields", function(options){
-    
-    if (! options.profileFields && ! options.loginName){
+
+    if (! options.profileFields && ! options.profileLoginName && ! options.profileLoginPassword ){
 	return undefined;
     };
     
-    var selector = selectorFromUserProfileQuery(allowedLoginFields, options.loginName);
+    check(options.profileLoginName, String);
+    check(options.profileLoginPassword, passwordValidator);
+    
+    var selector = selectorFromUserProfileQuery(allowedLoginFields, options.profileLoginName);
     
     var user = Meteor.users.findOne(selector);
     
@@ -75,8 +86,9 @@ Accounts.registerLoginHandler("profileFields", function(options){
     if (!user.services || !user.services.password || !(user.services.password.bcrypt || user.services.password.srp))
 	throw new Meteor.Error(403, "User has no password set");
 
-    return {
-	userId: user._id
-    };
+    return checkPassword(
+	user,
+	options.profileLoginPassword
+    );
 
 });

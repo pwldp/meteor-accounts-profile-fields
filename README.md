@@ -34,8 +34,8 @@ from 'users' collection.
 At first are checked fields from 'profile'. 
 
 ### on server
-Define in settings.json fields used to find user, for example:
-```js
+Define in file `settings.json` fields used to find user, for example:
+```javascript
 {
   "login_with_profile_fields": ["register_plate","phone"]
 }
@@ -59,7 +59,10 @@ Meteor.loginWithProfileField(login, password, function(err) {
 });
 ```
 
-
+### run app with settings.json
+```
+meteor --settings=settings.json
+```
 
 
 
